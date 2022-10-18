@@ -16,6 +16,8 @@ namespace Experimenting
         [Function("RabbitListener")]
         public void Run([RabbitMQTrigger("myqueue", ConnectionStringSetting = "amqp://guest:guest@localhost:15672/")] string myQueueItem)
         {
+
+            // amqps://gmtxfped:q9q2CrgirKMatFilFe-qlM4cMzGa4hii@beaver.rmq.cloudamqp.com/gmtxfped
             _logger.LogInformation($"C# Queue trigger function processed: {myQueueItem}");
         }
     }
