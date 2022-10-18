@@ -5,6 +5,9 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
+using RabbitMQ.Client;
 
 namespace Requestor
 {
@@ -41,11 +44,14 @@ namespace Requestor
 
             var one = parentId;
 
-           
-            var t = DoBusiness();
+
+            //var t = DoBusiness();
+
+            PostToQueue();
             activity.Stop();
             _logger.LogInformation("Requestor "+one);
             response.WriteString("Welcome to Azure Functions subbux!");
+
 
             return response;
         }
@@ -67,7 +73,7 @@ namespace Requestor
             using var client = new HttpClient();
             var response = client.PostAsync(url, data).Result;
             var result = response.Content.ReadAsStringAsync().Result;
-            
+
             //activity.Stop();
             return result;
 
@@ -77,7 +83,48 @@ namespace Requestor
 
 
 
+        public void PostToQueue()
+        {
+            var factory = new ConnectionFactory() { HostName = "localhost" };
 
+            using var connection = factory.CreateConnection();
+
+            using var channel = connection.CreateModel();
+
+
+            var basicProps = channel.CreateBasicProperties();
+
+            var message = "new implementation is working";
+
+            var body = Encoding.UTF8.GetBytes(message);
+
+
+            TextMapPropagator _propagator = Propagators.DefaultTextMapPropagator;
+
+            string traceparent = "get the traceparent from TraceContext.Attributes";
+
+
+
+            var contextToInject = Activity.Current.Context;
+            _logger.LogInformation("here is the context " + contextToInject);
+            _propagator.Inject(
+                new PropagationContext(contextToInject, Baggage.Current),
+                basicProps,
+                RabbitMqHelper.InjectTraceContextIntoBasicProperties);
+
+            RabbitMqHelper.AddMessagingTags(Activity.Current, "myqueue");
+
+            channel.BasicPublish(
+                        exchange: "",
+                        routingKey: "myqueue",
+                        basicProperties: basicProps,
+                        body: body);
+
+
+
+
+
+        }
 
 
 
