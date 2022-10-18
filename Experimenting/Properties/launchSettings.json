@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "Experimenting": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 4091"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 31177,
+      "useSSL": false
+    }
+  }
+}
