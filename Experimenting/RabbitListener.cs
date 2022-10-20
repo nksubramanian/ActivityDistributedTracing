@@ -23,9 +23,10 @@ namespace Experimenting
             activity.Start();
             var t = activity.Id;
             activity.SetParentId(t);
-
+            _logger.LogInformation($"The string received is : "+ myQueueItem);
             var (operationId, parentId) = GetOperationIdAndParentId(Context);
-            _logger.LogInformation($"The operation Id is : {parentId}");
+            _logger.LogInformation($"The operation Id is : {parentId}"); 
+
             // amqps://gmtxfped:q9q2CrgirKMatFilFe-qlM4cMzGa4hii@beaver.rmq.cloudamqp.com/gmtxfped
 
             activity.Stop();

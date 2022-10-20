@@ -1,9 +1,9 @@
 ﻿namespace Requestor
 {
-    internal class Person
+    public class Person
     {
-        private string v1;
-        private string v2;
+        public string v1;
+        public string v2;
 
         public Person(string v1, string v2)
         {

@@ -96,14 +96,18 @@ namespace Requestor
 
             var message = "new implementation is working";
 
-            var body = Encoding.UTF8.GetBytes(message);
+            var person = new Person("John Doe", "gardener");
+
+            string personstring = JsonConvert.SerializeObject(person);
+
+            var body = Encoding.UTF8.GetBytes(personstring);
 
 
             TextMapPropagator _propagator = Propagators.DefaultTextMapPropagator;
 
             string traceparent = "get the traceparent from TraceContext.Attributes";
 
-
+        
 
             var contextToInject = Activity.Current.Context;
             _logger.LogInformation("here is the context " + contextToInject);
