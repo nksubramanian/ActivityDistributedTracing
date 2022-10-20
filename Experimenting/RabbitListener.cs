@@ -1,7 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
 
 namespace Experimenting
 {
@@ -17,12 +20,25 @@ namespace Experimenting
         [Function("RabbitListener")]
         public void Run([RabbitMQTrigger("myqueue", ConnectionStringSetting = "amqp://guest:guest@localhost:15672/")] MetaDataWrapper myQueueItem, FunctionContext Context)
         {
+            string traceparent = "subbu";
+            if (Context.BindingContext.BindingData.TryGetValue("BasicProperties", out var basicProperties))
+            {
+
+                var dynamicObject = JsonConvert.DeserializeObject<dynamic>(basicProperties.ToString())!;
+
+                var headers = dynamicObject.Headers;
+                traceparent = headers.traceparent;
+               
+
+
+
+
+            }
+
             var activity = new Activity("Parent");
-            //var guid = "00-" + parentId + "-15f670e22f6dbece-00";
-            //activity.SetParentId(guid);
+            var guid = traceparent;
+            activity.SetParentId(guid);
             activity.Start();
-            var t = activity.Id;
-            activity.SetParentId(t);
             _logger.LogInformation($"The string received is : "+ myQueueItem);
             var (operationId, parentId) = GetOperationIdAndParentId(Context);
             _logger.LogInformation($"The operation Id is : {parentId}"); 

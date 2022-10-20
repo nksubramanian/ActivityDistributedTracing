@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
@@ -47,7 +49,7 @@ namespace Requestor
 
             //var t = DoBusiness();
 
-            PostToQueue();
+            PostToQueue(guid);
             activity.Stop();
             _logger.LogInformation("Requestor "+one);
             response.WriteString("Welcome to Azure Functions subbux!");
@@ -83,7 +85,7 @@ namespace Requestor
 
 
 
-        public void PostToQueue()
+        public void PostToQueue(string operationId)
         {
             var factory = new ConnectionFactory() { HostName = "localhost" };
 
@@ -94,11 +96,22 @@ namespace Requestor
 
             var basicProps = channel.CreateBasicProperties();
 
+         
             var person = new MetaDataWrapper("John Doe", "gardener");
 
             string personstring = JsonConvert.SerializeObject(person);
 
             var body = Encoding.UTF8.GetBytes(personstring);
+
+
+
+            basicProps.ContentType = "text/plain";
+            basicProps.DeliveryMode = 2;
+            basicProps.Headers = new Dictionary<string, object>();
+            basicProps.Headers.Add("traceparent", operationId);
+          
+            basicProps.ReplyTo = "localhost";
+
 
 
             TextMapPropagator _propagator = Propagators.DefaultTextMapPropagator;
