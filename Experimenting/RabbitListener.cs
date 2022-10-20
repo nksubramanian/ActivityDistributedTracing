@@ -15,7 +15,7 @@ namespace Experimenting
         }
 
         [Function("RabbitListener")]
-        public void Run([RabbitMQTrigger("myqueue", ConnectionStringSetting = "amqp://guest:guest@localhost:15672/")] string myQueueItem, FunctionContext Context)
+        public void Run([RabbitMQTrigger("myqueue", ConnectionStringSetting = "amqp://guest:guest@localhost:15672/")] MetaDataWrapper myQueueItem, FunctionContext Context)
         {
             var activity = new Activity("Parent");
             //var guid = "00-" + parentId + "-15f670e22f6dbece-00";

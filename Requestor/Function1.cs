@@ -64,7 +64,7 @@ namespace Requestor
             //var activity = new Activity("Main");
             //activity.Start();
             var url = "http://localhost:4091/api/Function1";
-            var person = new Person("John Doe", "gardener");
+            var person = new MetaDataWrapper("John Doe", "gardener");
 
             //activity.Id = "00-b68901b63f1436a15ad24e12f47745af-a442624e8ebd1d3f-00";
             //activity.Context.TraceId = "1c227caf77df71af761a651bfe4135a6";
@@ -94,9 +94,7 @@ namespace Requestor
 
             var basicProps = channel.CreateBasicProperties();
 
-            var message = "new implementation is working";
-
-            var person = new Person("John Doe", "gardener");
+            var person = new MetaDataWrapper("John Doe", "gardener");
 
             string personstring = JsonConvert.SerializeObject(person);
 
