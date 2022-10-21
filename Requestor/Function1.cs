@@ -34,31 +34,23 @@ namespace Requestor
             var guid = "00-"+parentId+"-15f670e22f6dbece-00";
             activity.SetParentId(guid);
             activity.Start();
-            
-
-
-            
-
 
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-       
 
-            var one = parentId;
-
-
-            //var t = DoBusiness();
+            _logger.LogInformation("The operation id of the sender is " + parentId);
+            var t = SendHttpRequests();
 
             PostToQueue(guid);
             activity.Stop();
-            _logger.LogInformation("Requestor "+one);
+            
             response.WriteString("Welcome to Azure Functions subbux!");
 
 
             return response;
         }
 
-        public string DoBusiness()
+        public string SendHttpRequests()
         {
 
 
@@ -108,7 +100,7 @@ namespace Requestor
             basicProps.ContentType = "text/plain";
             basicProps.DeliveryMode = 2;
             basicProps.Headers = new Dictionary<string, object>();
-            basicProps.Headers.Add("traceparent", operationId);
+            //basicProps.Headers.Add("traceparent", operationId);
           
             basicProps.ReplyTo = "localhost";
 

@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.Text.Json;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -18,34 +20,69 @@ namespace Experimenting
         }
 
         [Function("RabbitListener")]
-        public void Run([RabbitMQTrigger("myqueue", ConnectionStringSetting = "amqp://guest:guest@localhost:15672/")] MetaDataWrapper myQueueItem, FunctionContext Context)
+        public void Run([RabbitMQTrigger("myqueue", ConnectionStringSetting = "amqp://guest:guest@localhost:15672/")] string myQueueItem, FunctionContext Context)
         {
-            string traceparent = "subbu";
-            if (Context.BindingContext.BindingData.TryGetValue("BasicProperties", out var basicProperties))
+            //MetaDataWrapper is the object being sent by the receiver here
+
+
+            string traceparent="there is nothing";
+            try
             {
+                if (Context.BindingContext.BindingData.TryGetValue("BasicProperties", out var basicProperties))
+                {
 
-                var dynamicObject = JsonConvert.DeserializeObject<dynamic>(basicProperties.ToString())!;
+                    var dynamicObject = JsonConvert.DeserializeObject<dynamic>(basicProperties.ToString())!;
 
-                var headers = dynamicObject.Headers;
-                traceparent = headers.traceparent;
-               
+                    var headers = dynamicObject.Headers;
+                    traceparent = headers.traceparent;
 
-
-
+                }
 
             }
+            catch(Exception ex)
+            {
 
-            var activity = new Activity("Parent");
-            var guid = traceparent;
-            activity.SetParentId(guid);
-            activity.Start();
-            _logger.LogInformation($"The string received is : "+ myQueueItem);
-            var (operationId, parentId) = GetOperationIdAndParentId(Context);
-            _logger.LogInformation($"The operation Id is : {parentId}"); 
+            }
+            if(traceparent!=null)
+            {
+                _logger.LogInformation($"The traceparent of RabbitMQ is : {traceparent.FirstOrDefault()}");
+            }
+            else
+            {
+                _logger.LogInformation($"The traceparent of RabbitMQ is : {traceparent}");
+            }
 
-            // amqps://gmtxfped:q9q2CrgirKMatFilFe-qlM4cMzGa4hii@beaver.rmq.cloudamqp.com/gmtxfped
+            var telemetryRequest = new RequestTelemetry();
+            //telemetryRequest.Context.Operation.Id = "00-70a3d58f5f30dfde49d04dcd97bf4ff0-15f670e22f6dbece-00";
+            var telemetryClient = new TelemetryClient();
+            var currentOperation = telemetryClient.StartOperation(telemetryRequest);
+            try
+            {
 
-            activity.Stop();
+                var activity = new Activity("Parent");
+                var guid = traceparent;
+                activity.SetParentId(guid);
+                activity.Start();
+                _logger.LogInformation($"The string received is : " + myQueueItem);
+                var (operationId, parentId) = GetOperationIdAndParentId(Context);
+                _logger.LogInformation($"The operation Id of RabbitMq Listener is : {parentId}");
+
+                // amqps://gmtxfped:q9q2CrgirKMatFilFe-qlM4cMzGa4hii@beaver.rmq.cloudamqp.com/gmtxfped
+
+                activity.Stop();
+
+            }
+            catch (Exception e)
+            {
+                telemetryClient.TrackException(e);
+            }
+            finally
+            {
+                telemetryClient.StopOperation(currentOperation);
+            }
+
+
+            
         }
 
         private (string, string) GetOperationIdAndParentId(FunctionContext executionContext)

@@ -19,10 +19,11 @@ namespace Experimenting
         {
             req.Headers.TryGetValues("traceparent", out var headerValue);
 
-            _logger.LogInformation("traceparent " + headerValue);
+            
             var (operationId, parentId) = GetOperationIdAndParentId(Context);
-            var two = parentId;
-            _logger.LogInformation("Experimenter "+ two);
+
+            _logger.LogInformation("Traceparent at HTTP receiver is " + headerValue.FirstOrDefault());
+            _logger.LogInformation("The operation Id of Http receiver "+ parentId);
             var response = req.CreateResponse(HttpStatusCode.OK);
             response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 

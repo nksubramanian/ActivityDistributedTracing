@@ -3,7 +3,7 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": "6e7"
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "6e7616bc-535b-4242-9346-ee622eca7526"
   },
   "Host": {
     "LocalHttpPort": 49653
