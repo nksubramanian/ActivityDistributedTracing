@@ -26,15 +26,22 @@ namespace Experimenting
 
 
             string traceparent="there is nothing";
+            string correlationid = "there is nothing";
+            string messageid = "there is nothing";
             try
             {
+               
+
                 if (Context.BindingContext.BindingData.TryGetValue("BasicProperties", out var basicProperties))
                 {
 
                     var dynamicObject = JsonConvert.DeserializeObject<dynamic>(basicProperties.ToString())!;
 
+                    messageid = dynamicObject.MessageId;
+                    correlationid = dynamicObject.CorrelationId;
                     var headers = dynamicObject.Headers;
                     traceparent = headers.traceparent;
+
 
                 }
 
@@ -43,14 +50,12 @@ namespace Experimenting
             {
 
             }
-            if(traceparent!=null)
-            {
-                _logger.LogInformation($"The traceparent of RabbitMQ is : {traceparent.FirstOrDefault()}");
-            }
-            else
-            {
-                _logger.LogInformation($"The traceparent of RabbitMQ is : {traceparent}");
-            }
+
+          
+             _logger.LogInformation($"The traceparent of RabbitMQ is : {traceparent}");
+            _logger.LogInformation($"The correlation id is : {correlationid}");
+            _logger.LogInformation($"The messageid is : {messageid}");
+
 
             var telemetryRequest = new RequestTelemetry();
             //telemetryRequest.Context.Operation.Id = "00-70a3d58f5f30dfde49d04dcd97bf4ff0-15f670e22f6dbece-00";

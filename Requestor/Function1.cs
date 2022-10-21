@@ -39,7 +39,7 @@ namespace Requestor
             response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
             _logger.LogInformation("The operation id of the sender is " + parentId);
-            var t = SendHttpRequests();
+            //var t = SendHttpRequests();
 
             PostToQueue(guid);
             activity.Stop();
@@ -77,8 +77,9 @@ namespace Requestor
 
 
 
-        public void PostToQueue(string operationId)
+        public void PostToQueue(string fulloperationid)
         {
+            
             var factory = new ConnectionFactory() { HostName = "localhost" };
 
             using var connection = factory.CreateConnection();
@@ -100,15 +101,18 @@ namespace Requestor
             basicProps.ContentType = "text/plain";
             basicProps.DeliveryMode = 2;
             basicProps.Headers = new Dictionary<string, object>();
-            //basicProps.Headers.Add("traceparent", operationId);
-          
+            basicProps.Headers.Add("traceparent", fulloperationid);
+            basicProps.CorrelationId = fulloperationid;
+            basicProps.MessageId = fulloperationid;
+
+
             basicProps.ReplyTo = "localhost";
 
 
 
             TextMapPropagator _propagator = Propagators.DefaultTextMapPropagator;
 
-            string traceparent = "get the traceparent from TraceContext.Attributes";
+           
 
         
 
