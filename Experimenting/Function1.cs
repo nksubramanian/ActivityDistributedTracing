@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -17,6 +18,15 @@ namespace Experimenting
         [Function("Function1")]
         public HttpResponseData Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req, FunctionContext Context)
         {
+            Activity.DefaultIdFormat = ActivityIdFormat.W3C;
+            Activity.ForceDefaultIdFormat = true;
+
+            var activity = new Activity("Child");
+            //var guid = "00-"+parentId+"-15f670e22f6dbece-00";
+            //activity.SetParentId(guid);
+            activity.Start();
+
+
             req.Headers.TryGetValues("traceparent", out var headerValue);
 
             
@@ -28,7 +38,7 @@ namespace Experimenting
             response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
             response.WriteString("Welcome to Azure Functions!");
-
+            activity.Stop();
             return response;
         }
 
