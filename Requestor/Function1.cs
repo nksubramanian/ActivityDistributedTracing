@@ -39,7 +39,7 @@ namespace Requestor
             response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
 
             _logger.LogInformation("The operation id of the sender is " + parentId);
-            //var t = SendHttpRequests();
+            var t = SendHttpRequests();
 
             PostToQueue(guid);
             activity.Stop();
@@ -108,7 +108,7 @@ namespace Requestor
 
             basicProps.ReplyTo = "localhost";
 
-
+            /*
 
             TextMapPropagator _propagator = Propagators.DefaultTextMapPropagator;
 
@@ -124,7 +124,7 @@ namespace Requestor
                 RabbitMqHelper.InjectTraceContextIntoBasicProperties);
 
             RabbitMqHelper.AddMessagingTags(Activity.Current, "myqueue");
-
+            */
             channel.BasicPublish(
                         exchange: "",
                         routingKey: "myqueue",
