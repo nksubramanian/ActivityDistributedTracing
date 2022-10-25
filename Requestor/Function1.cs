@@ -52,24 +52,34 @@ namespace Requestor
 
         public string SendHttpRequests()
         {
+            try
+            {
+
+                Console.WriteLine("Hello, World!");
+                //var activity = new Activity("Main");
+                //activity.Start();
+                var url = "http://localhost:4091/api/Function1";
+                var person = new MetaDataWrapper("John Doe", "gardener");
+
+                //activity.Id = "00-b68901b63f1436a15ad24e12f47745af-a442624e8ebd1d3f-00";
+                //activity.Context.TraceId = "1c227caf77df71af761a651bfe4135a6";
+                var json = JsonConvert.SerializeObject(person);
+                var data = new StringContent(json, Encoding.UTF8, "application/json");
+                using var client = new HttpClient();
+                var response = client.PostAsync(url, data).Result;
+                var result = response.Content.ReadAsStringAsync().Result;
+
+                //activity.Stop();
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                return "unsuccessful";
+            }
 
 
-            Console.WriteLine("Hello, World!");
-            //var activity = new Activity("Main");
-            //activity.Start();
-            var url = "http://localhost:4091/api/Function1";
-            var person = new MetaDataWrapper("John Doe", "gardener");
 
-            //activity.Id = "00-b68901b63f1436a15ad24e12f47745af-a442624e8ebd1d3f-00";
-            //activity.Context.TraceId = "1c227caf77df71af761a651bfe4135a6";
-            var json = JsonConvert.SerializeObject(person);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
-            using var client = new HttpClient();
-            var response = client.PostAsync(url, data).Result;
-            var result = response.Content.ReadAsStringAsync().Result;
-
-            //activity.Stop();
-            return result;
 
 
         }
