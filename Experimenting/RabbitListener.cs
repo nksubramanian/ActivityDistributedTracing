@@ -20,7 +20,7 @@ namespace Experimenting
         }
 
         [Function("RabbitListener")]
-        public void Run([RabbitMQTrigger("myqueue", ConnectionStringSetting = "amqp://guest:guest@localhost:15672/")] string myQueueItem, FunctionContext Context)
+        public void Run([RabbitMQTrigger("myqueue", ConnectionStringSetting = "CONNECTION_STRING")] string myQueueItem, FunctionContext Context)
         {
             //MetaDataWrapper is the object being sent by the receiver here
 

@@ -3,7 +3,8 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    "APPINSIGHTS_INSTRUMENTATIONKEY": "6e7616bc-535b-4242-9346-ee622eca7526"
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "6e7616bc-535b-4242-9346-ee622eca7526",
+    "CONNECTION_STRING": "amqps://gmtxfped:q9q2CrgirKMatFilFe-qlM4cMzGa4hii@beaver.rmq.cloudamqp.com/gmtxfped"
   },
   "Host": {
     "LocalHttpPort": 49653
