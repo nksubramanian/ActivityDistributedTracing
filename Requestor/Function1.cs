@@ -92,38 +92,25 @@ namespace Requestor
             using var channel = connection.CreateModel();
 
 
-            var basicProps = channel.CreateBasicProperties();
-
-            var message = "new implementation is working";
-
-            var body = Encoding.UTF8.GetBytes(message);
+            IBasicProperties props = channel.CreateBasicProperties();
 
 
-            TextMapPropagator _propagator = Propagators.DefaultTextMapPropagator;
+            byte[] messageBodyBytes = System.Text.Encoding.UTF8.GetBytes("Hello, world!");
 
-            string traceparent = "get the traceparent from TraceContext.Attributes";
+            
+            props.ContentType = "text/plain";
+            props.DeliveryMode = 2;
+            props.Headers = new Dictionary<string, object>();
+            props.Headers.Add("latitude", 51.5252949);
+            props.Headers.Add("longitude", -0.0905493);
 
 
-
-            var contextToInject = Activity.Current.Context;
-            _logger.LogInformation("here is the context " + contextToInject);
-            _propagator.Inject(
-                new PropagationContext(contextToInject, Baggage.Current),
-                basicProps,
-                RabbitMqHelper.InjectTraceContextIntoBasicProperties);
-
-            RabbitMqHelper.AddMessagingTags(Activity.Current, "myqueue");
 
             channel.BasicPublish(
                         exchange: "",
                         routingKey: "myqueue",
-                        basicProperties: basicProps,
-                        body: body);
-
-
-
-
-
+                        basicProperties: props,
+                        body: messageBodyBytes);
         }
 
 
