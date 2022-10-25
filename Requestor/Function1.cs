@@ -89,9 +89,9 @@ namespace Requestor
 
         public void PostToQueue(string fulloperationid)
         {
+            var uri = new Uri("amqps://gmtxfped:q9q2CrgirKMatFilFe-qlM4cMzGa4hii@beaver.rmq.cloudamqp.com/gmtxfped");
+            var factory = new ConnectionFactory() { Uri = uri };
             
-            var factory = new ConnectionFactory() { HostName = "localhost" };
-
             using var connection = factory.CreateConnection();
 
             using var channel = connection.CreateModel();
